@@ -3,6 +3,7 @@ package application.gpacalculatorservice;
 import application.gpacalculatorservice.authentication.AuthenticationRequest;
 import application.gpacalculatorservice.authentication.AuthenticationService;
 import application.gpacalculatorservice.calculate.CalculateGpaService;
+import application.gpacalculatorservice.showdetails.ShowResultsService;
 import application.gpacalculatorservice.storecourses.StoreCoursesRequest;
 import application.gpacalculatorservice.storecourses.StoreCoursesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.sql.SQLDataException;
 import java.util.ArrayList;
@@ -22,15 +24,18 @@ class GpaCalculatorController {
     AuthenticationService authenticationService;
     StoreCoursesService storeCoursesService;
     CalculateGpaService calculateGpaService;
+    ShowResultsService showResultsService;
+
     @Autowired
     public GpaCalculatorController(AuthenticationService authenticationService,
                                    StoreCoursesService storeCoursesService,
-                                   CalculateGpaService calculateGpaService) {
+                                   CalculateGpaService calculateGpaService,
+                                   ShowResultsService showResultsService) {
         this.authenticationService = authenticationService;
         this.storeCoursesService = storeCoursesService;
         this.calculateGpaService = calculateGpaService;
+        this.showResultsService = showResultsService;
     }
-
     @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("username", "");
@@ -38,7 +43,7 @@ class GpaCalculatorController {
         return "login_page";
     }
     @GetMapping("/gpa-calculator")
-    public String gpaCalculatorPage(Model model) {
+    public String gpaCalculatorPage() {
         return "gpa_calculator";
     }
     @PostMapping("/auth")
@@ -58,8 +63,15 @@ class GpaCalculatorController {
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new SQLDataException();
         }
-        calculateGpaService.calculate();
-      //  redirectAttributes.addFlashAttribute("successMessage", "Grades have been saved successfully.");
+        calculateGpaDetails();
+        redirectAttributes.addFlashAttribute("isGradeCalculated", true);
         return "redirect:/gpa-calculator";
+    }
+    public void calculateGpaDetails() {
+        calculateGpaService.calculate();
+    }
+    @GetMapping("/show-gpa-details")
+    public RedirectView showCalculatedGrade() {
+        return showResultsService.showResults();
     }
 }

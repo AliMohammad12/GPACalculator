@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Show Results</title>
+</head>
+<body>
+<h1>GPA Analytics Results</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>GPA</th>
+        <th>Highest Grade</th>
+        <th>Lowest Grade</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="gpaAnalytics : ${gpaAnalyticsList}">
+        <td th:text="${gpaAnalytics.getGpa()}"></td>
+        <td th:text="${gpaAnalytics.getHighestMark()}"></td>
+        <td th:text="${gpaAnalytics.getLowestMark()}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

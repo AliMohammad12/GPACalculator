@@ -3,6 +3,7 @@
 <head>
   <title>GPA Calculator</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 </head>
 <body>
 <div th:if="${successMessage}" class="alert alert-success">
@@ -48,6 +49,10 @@
         <button type="button" class="btn btn-primary" id="addCourse">Add Course</button>
         <button type="submit" class="btn btn-success">Calculate GPA</button>
       </form>
+      <br>
+      <div th:if="${isGradeCalculated}">
+        <a th:href="@{/show-gpa-details}" class="btn btn-danger">Show Calculated Grade</a>
+      </div>
     </div>
   </div>
 </div>
