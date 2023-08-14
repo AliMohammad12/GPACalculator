@@ -63,6 +63,7 @@ class GpaCalculatorController {
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new SQLDataException();
         }
+
         calculateGpaDetails();
         redirectAttributes.addFlashAttribute("isGradeCalculated", true);
         return "redirect:/gpa-calculator";

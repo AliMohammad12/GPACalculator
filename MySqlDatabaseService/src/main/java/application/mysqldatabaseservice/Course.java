@@ -12,7 +12,6 @@ public class Course {
     private Long id;
     private String name;
     private String grade;
-
     public Course(String courseName, String courseGrade) {
         name = courseName;
         grade = courseGrade;

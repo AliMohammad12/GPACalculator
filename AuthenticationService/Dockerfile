@@ -1,5 +1,7 @@
 FROM openjdk:17
 WORKDIR /app
 COPY target/AuthenticationService-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY wait-for-it.sh /usr/wait-for-it.sh
+RUN chmod +x /usr/wait-for-it.sh
 EXPOSE 8082
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["/usr/wait-for-it.sh", "mysqldb:3306", "--", "java", "-jar", "app.jar"]
