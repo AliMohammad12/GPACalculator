@@ -1,0 +1,30 @@
+version: '3'
+services:
+  gpacalculator:
+    build: ./GPACalculatorService
+    container_name: GPACalculator-container
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - auth-network
+    depends_on:
+      - authentication
+
+  authentication:
+    build: ./AuthenticationService
+    container_name: authentication-service
+    restart: always
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_PORT: 3306
+    ports:
+      - "8082:8082"
+    networks:
+      - auth-network
+
+networks:
+  auth-network:
+    external: true
