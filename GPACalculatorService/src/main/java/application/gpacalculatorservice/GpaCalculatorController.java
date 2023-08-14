@@ -72,6 +72,7 @@ class GpaCalculatorController {
     }
     @GetMapping("/show-gpa-details")
     public RedirectView showCalculatedGrade() {
+        System.out.println("HEy");
         return showResultsService.showResults();
     }
 }

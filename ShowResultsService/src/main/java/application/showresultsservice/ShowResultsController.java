@@ -20,6 +20,7 @@ public class ShowResultsController {
 
     @GetMapping("/show-results")
     public String showResults(Model model) {
+        System.out.println("Hey");
         List<GpaAnalytics> gpaAnalyticsList = mongoDBService.readResults();
         model.addAttribute("gpaAnalyticsList", gpaAnalyticsList);
         return "show_results";
