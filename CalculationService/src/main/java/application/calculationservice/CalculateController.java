@@ -1,9 +1,9 @@
 package application.calculationservice;
 
 import application.calculationservice.readcourses.Course;
-import application.calculationservice.readcourses.MySqlService;
-import application.calculationservice.storeresult.GpaAnalytics;
-import application.calculationservice.storeresult.MongoDBService;
+import application.calculationservice.readcourses.MySqlDatabase;
+import application.calculationservice.storeanalytics.GpaAnalytics;
+import application.calculationservice.storeanalytics.MongoDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,28 +15,24 @@ import java.util.List;
 @RestController
 public class CalculateController {
     private CalculateService calculateService;
-    private MySqlService mySqlService;
-    private MongoDBService mongoDBService;
-
+    private MongoDatabase mongoDatabase;
+    private MySqlDatabase mySqlDatabase;
     @Autowired
-    public CalculateController(CalculateService calculateService,
-                               MySqlService mySqlService, MongoDBService mongoDBService) {
+    public CalculateController(CalculateService calculateService, MongoDatabase mongoDatabase, MySqlDatabase mySqlDatabase) {
         this.calculateService = calculateService;
-        this.mySqlService = mySqlService;
-        this.mongoDBService = mongoDBService;
+        this.mongoDatabase = mongoDatabase;
+        this.mySqlDatabase = mySqlDatabase;
     }
 
     @RequestMapping("/calculate")
     public void calculate() throws Exception {
-        List<Course> courseList = mySqlService.getCourses();
+        List<Course> courseList = mySqlDatabase.getAllCourses();
+        System.out.println("Here = " + courseList.size());
         GpaAnalytics gpaAnalytics = calculateService.getGpaAnalytics(courseList);
         storeAnalysis(gpaAnalytics);
     }
     @RequestMapping("/store-analysis")
-    public void storeAnalysis(GpaAnalytics gpaAnalytics) throws Exception {
-        ResponseEntity<String> response =  mongoDBService.storeResult(gpaAnalytics);
-        if (response.getStatusCode() != HttpStatus.OK) {
-            throw new Exception ("Could not save data to MongoDB");
-        }
+    public void storeAnalysis(GpaAnalytics gpaAnalytics)  {
+        mongoDatabase.saveGpaAnalytics(gpaAnalytics);
     }
 }

@@ -4,38 +4,38 @@ import application.gpacalculatorservice.authentication.AuthenticationRequest;
 import application.gpacalculatorservice.authentication.AuthenticationService;
 import application.gpacalculatorservice.calculate.CalculateGpaService;
 import application.gpacalculatorservice.showdetails.ShowResultsService;
-import application.gpacalculatorservice.storecourses.StoreCoursesRequest;
-import application.gpacalculatorservice.storecourses.StoreCoursesService;
+import application.gpacalculatorservice.storecourses.Course;
+import application.gpacalculatorservice.storecourses.MySqlDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.sql.SQLDataException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 class GpaCalculatorController {
     AuthenticationService authenticationService;
-    StoreCoursesService storeCoursesService;
     CalculateGpaService calculateGpaService;
     ShowResultsService showResultsService;
-
+    MySqlDatabase mySqlDatabase;
     @Autowired
     public GpaCalculatorController(AuthenticationService authenticationService,
-                                   StoreCoursesService storeCoursesService,
                                    CalculateGpaService calculateGpaService,
-                                   ShowResultsService showResultsService) {
+                                   ShowResultsService showResultsService,
+                                   MySqlDatabase mySqlDatabase) {
         this.authenticationService = authenticationService;
-        this.storeCoursesService = storeCoursesService;
         this.calculateGpaService = calculateGpaService;
         this.showResultsService = showResultsService;
+        this.mySqlDatabase = mySqlDatabase;
     }
+
     @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("username", "");
@@ -56,19 +56,21 @@ class GpaCalculatorController {
         return "redirect:/login";
     }
     @PostMapping("/save-grades")
-    public String saveGrades(@RequestParam("course") List<String> courses,
-                             @RequestParam("grade") List<String> grades, RedirectAttributes redirectAttributes) throws SQLDataException {
-        StoreCoursesRequest storeCoursesRequest = new StoreCoursesRequest(courses, grades);
-        ResponseEntity<String> response = storeCoursesService.storeCourses(storeCoursesRequest);
-        if (response.getStatusCode() != HttpStatus.OK) {
-            throw new SQLDataException();
-        }
+    public String saveGrades(@RequestParam("course") List<String> coursesNames,
+                             @RequestParam("grade") List<String> grades,
+                             RedirectAttributes redirectAttributes) throws SQLDataException {
 
-        calculateGpaDetails();
-        redirectAttributes.addFlashAttribute("isGradeCalculated", true);
+        List<Course> courses = IntStream.range(0, coursesNames.size())
+                .mapToObj(i -> new Course(coursesNames.get(i), grades.get(i)))
+                .collect(Collectors.toList());
+
+        System.out.println(courses.size());
+        mySqlDatabase.saveCourses(courses);
+        calculateGpaDetails(redirectAttributes);
         return "redirect:/gpa-calculator";
     }
-    public void calculateGpaDetails() {
+    public void calculateGpaDetails(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("isGradeCalculated", true);
         calculateGpaService.calculate();
     }
     @GetMapping("/show-gpa-details")

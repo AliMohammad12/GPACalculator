@@ -1,4 +1,4 @@
-package application.calculationservice.readcourses;
+package application.gpacalculatorservice.storecourses;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

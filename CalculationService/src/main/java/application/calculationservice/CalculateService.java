@@ -1,7 +1,7 @@
 package application.calculationservice;
 
 import application.calculationservice.readcourses.Course;
-import application.calculationservice.storeresult.GpaAnalytics;
+import application.calculationservice.storeanalytics.GpaAnalytics;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
