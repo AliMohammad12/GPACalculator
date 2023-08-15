@@ -1,7 +1,7 @@
 package application.calculationservice;
 
-import application.calculationservice.readcourses.Course;
-import application.calculationservice.storeanalytics.GpaAnalytics;
+import application.calculationservice.mysqldb.Course;
+import application.calculationservice.mongodb.GpaAnalytics;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -22,7 +22,7 @@ public class CalculateService {
             totalGradePoints += 3.0 * getValue(course.getGrade());
         }
         int numberOfCourses = courseList.size();
-        double GPA = totalGradePoints / 3.0 * numberOfCourses;
+        double GPA = totalGradePoints / (3.0 * numberOfCourses);
         return GPA;
     }
     public double getValue(String grade) {

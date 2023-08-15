@@ -4,10 +4,9 @@ import application.gpacalculatorservice.authentication.AuthenticationRequest;
 import application.gpacalculatorservice.authentication.AuthenticationService;
 import application.gpacalculatorservice.calculate.CalculateGpaService;
 import application.gpacalculatorservice.showdetails.ShowResultsService;
-import application.gpacalculatorservice.storecourses.Course;
-import application.gpacalculatorservice.storecourses.MySqlDatabase;
+import application.gpacalculatorservice.mysqldb.Course;
+import application.gpacalculatorservice.mysqldb.MySqlDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +34,6 @@ class GpaCalculatorController {
         this.showResultsService = showResultsService;
         this.mySqlDatabase = mySqlDatabase;
     }
-
     @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("username", "");
@@ -64,7 +62,6 @@ class GpaCalculatorController {
                 .mapToObj(i -> new Course(coursesNames.get(i), grades.get(i)))
                 .collect(Collectors.toList());
 
-        System.out.println(courses.size());
         mySqlDatabase.saveCourses(courses);
         calculateGpaDetails(redirectAttributes);
         return "redirect:/gpa-calculator";
@@ -72,10 +69,14 @@ class GpaCalculatorController {
     public void calculateGpaDetails(RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("isGradeCalculated", true);
         calculateGpaService.calculate();
+        clearData();
     }
+
     @GetMapping("/show-gpa-details")
     public RedirectView showCalculatedGrade() {
-        System.out.println("HEy");
         return showResultsService.showResults();
+    }
+    private void clearData() {
+        mySqlDatabase.deleteAll();
     }
 }

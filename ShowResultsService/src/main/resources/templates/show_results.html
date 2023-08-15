@@ -3,25 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <title>Show Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        tbody tr:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-<h1>GPA Analytics Results</h1>
+<h1 class="text-center">GPA Analytics Results</h1>
 
-<table>
-    <thead>
-    <tr>
-        <th>GPA</th>
-        <th>Highest Grade</th>
-        <th>Lowest Grade</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="gpaAnalytics : ${gpaAnalyticsList}">
-        <td th:text="${gpaAnalytics.getGpa()}"></td>
-        <td th:text="${gpaAnalytics.getHighestMark()}"></td>
-        <td th:text="${gpaAnalytics.getLowestMark()}"></td>
-    </tr>
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead class="thead-light">
+        <tr>
+            <th>GPA</th>
+            <th>Highest Grade</th>
+            <th>Lowest Grade</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="gpaAnalytics : ${gpaAnalyticsList}">
+            <td th:text="${gpaAnalytics.getGpa()}"></td>
+            <td th:text="${gpaAnalytics.getHighestMark()}"></td>
+            <td th:text="${gpaAnalytics.getLowestMark()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

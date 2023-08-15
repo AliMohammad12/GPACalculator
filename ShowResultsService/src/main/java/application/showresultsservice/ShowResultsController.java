@@ -1,7 +1,7 @@
 package application.showresultsservice;
 
-import application.showresultsservice.readanalytics.GpaAnalytics;
-import application.showresultsservice.readanalytics.MongoDBService;
+import application.showresultsservice.mongodb.GpaAnalytics;
+import application.showresultsservice.mongodb.MongoDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,18 +11,20 @@ import java.util.List;
 
 @Controller
 public class ShowResultsController {
-    private final MongoDBService mongoDBService;
-
+    private final MongoDatabase mongoDatabase;
     @Autowired
-    public ShowResultsController(MongoDBService mongoDBService) {
-        this.mongoDBService = mongoDBService;
+    public ShowResultsController(MongoDatabase mongoDatabase) {
+        this.mongoDatabase = mongoDatabase;
     }
 
     @GetMapping("/show-results")
     public String showResults(Model model) {
-        System.out.println("Hey");
-        List<GpaAnalytics> gpaAnalyticsList = mongoDBService.readResults();
+        List<GpaAnalytics> gpaAnalyticsList = mongoDatabase.getAllGpaAnalytics();
         model.addAttribute("gpaAnalyticsList", gpaAnalyticsList);
+        clearData();
         return "show_results";
+    }
+    public void clearData() {
+        mongoDatabase.deleteAll();
     }
 }

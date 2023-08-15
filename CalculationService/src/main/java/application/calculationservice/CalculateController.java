@@ -1,12 +1,10 @@
 package application.calculationservice;
 
-import application.calculationservice.readcourses.Course;
-import application.calculationservice.readcourses.MySqlDatabase;
-import application.calculationservice.storeanalytics.GpaAnalytics;
-import application.calculationservice.storeanalytics.MongoDatabase;
+import application.calculationservice.mysqldb.Course;
+import application.calculationservice.mysqldb.MySqlDatabase;
+import application.calculationservice.mongodb.GpaAnalytics;
+import application.calculationservice.mongodb.MongoDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,11 +21,9 @@ public class CalculateController {
         this.mongoDatabase = mongoDatabase;
         this.mySqlDatabase = mySqlDatabase;
     }
-
     @RequestMapping("/calculate")
-    public void calculate() throws Exception {
+    public void calculate() {
         List<Course> courseList = mySqlDatabase.getAllCourses();
-        System.out.println("Here = " + courseList.size());
         GpaAnalytics gpaAnalytics = calculateService.getGpaAnalytics(courseList);
         storeAnalysis(gpaAnalytics);
     }
